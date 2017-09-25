@@ -26,7 +26,7 @@ class Request
      */
     public function __construct()
     {
-        $this->environment = $_ENV ?? $_SERVER;
+        $this->environment = $_SERVER;
         $this->cookies = $_COOKIE;
         $this->queryParams = $_GET;
         $this->parsedBody = $this->parseBody();
