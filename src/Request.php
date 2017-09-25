@@ -70,7 +70,7 @@ class Request
             case 'POST':
                 return $_POST;
             default:
-                throw new \RuntimeException("Method not allow", 405);
+                throw new \RuntimeException("Method Not Allowed", 405);
         }
     }
 

@@ -20,7 +20,7 @@ class RouteResolver
         $method = $request->getEnv()['REQUEST_METHOD'] ?? '';
 
         if (!isset($routes[$method])) {
-            throw new \RuntimeException("Method Not Allow", 405);
+            throw new \RuntimeException("Method Not Allowed", 405);
         }
 
         if (!isset($routes[$method][$route])) {
