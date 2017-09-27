@@ -7,10 +7,18 @@ namespace Xandros15\Blog;
 class Router
 {
     /** @var array */
-    private $get = [];
+    private $routes = ['GET' => [], 'POST' => []];
 
-    /** @var array */
-    private $post = [];
+    public function map(array $methods, string $endpoint, string $callback)
+    {
+        $methods = array_map('strtoupper', $methods);
+        foreach ($methods as $method) {
+            if (!in_array($method, array_keys($this->routes))) {
+                throw new \InvalidArgumentException('Wrong method to add. Got ' . $method);
+            }
+            $this->routes[$method][$endpoint] = $callback;
+        }
+    }
 
     /**
      * @param string $endpoint
@@ -18,7 +26,7 @@ class Router
      */
     public function get(string $endpoint, string $callback)
     {
-        $this->get[$endpoint] = $callback;
+        $this->map(['GET'], $endpoint, $callback);
     }
 
     /**
@@ -27,7 +35,7 @@ class Router
      */
     public function post(string $endpoint, string $callback)
     {
-        $this->post[$endpoint] = $callback;
+        $this->map(['post'], $endpoint, $callback);
     }
 
     /**
@@ -35,13 +43,10 @@ class Router
      *
      * @return mixed
      */
-    public function resolve(Request $request)
+    public function run(Request $request)
     {
         $resolver = new RouteResolver();
 
-        return $resolver->resolve($request, [
-            'POST' => $this->post,
-            'GET' => $this->get,
-        ]);
+        return $resolver->resolve($request, $this->routes);
     }
 }
