@@ -4,20 +4,20 @@
 namespace Xandros15\Blog\Controllers;
 
 
+use Xandros15\Blog\DI;
 use Xandros15\Blog\Renderer;
-use Xandros15\Blog\Request;
 
 abstract class AbstractController
 {
     const TEMPLATES_DIR = __DIR__ . '/../../templates/';
-    /** @var Request */
-    protected $request;
+    /** @var DI */
+    protected $container;
     /** @var Renderer */
     protected $view;
 
-    public function __construct(Request $request)
+    public function __construct(DI $container)
     {
-        $this->request = $request;
+        $this->container = $container;
         $this->view = new Renderer(self::TEMPLATES_DIR, [
             'title' => 'Blog',
             'content' => '',

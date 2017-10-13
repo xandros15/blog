@@ -8,13 +8,14 @@ class RouteResolver
 {
 
     /**
-     * @param Request $request
+     * @param DI $container
      * @param array $routes
      *
      * @return mixed
      */
-    public function resolve(Request $request, array $routes)
+    public function resolve(DI $container, array $routes)
     {
+        $request = $container->get(Request::class);
         $query = $request->getQueryParams();
         $route = $query['p'] ?? '';
         $method = $request->getEnv()['REQUEST_METHOD'] ?? '';
@@ -27,9 +28,19 @@ class RouteResolver
             throw new \RuntimeException("Not Found", 404);
         }
 
-        list($class, $callback) = explode(':', $routes[$method][$route]);
-        $controller = new $class($request);
+        $callback = $routes[$method][$route];
+        if ($callback instanceof \Closure) {
+            $callback->bindTo($container);
+        } elseif (strpos($callback, ':') !== false) {
+            list($class, $functionName) = explode(':', $callback);
+            $controller = new $class($container);
+            $callback = [$controller, $functionName];
+        }
 
-        return $controller->$callback();
+        if (!is_callable($callback)) {
+            throw new \RuntimeException(sprintf('Callback isn\'t callable. Method: %s. Route: %s.', $method, $route));
+        }
+
+        return call_user_func($callback);
     }
 }

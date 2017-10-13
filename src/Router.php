@@ -39,14 +39,14 @@ class Router
     }
 
     /**
-     * @param Request $request
+     * @param DI $container
      *
      * @return mixed
      */
-    public function run(Request $request)
+    public function run(DI $container)
     {
         $resolver = new RouteResolver();
 
-        return $resolver->resolve($request, $this->routes);
+        return $resolver->resolve($container, $this->routes);
     }
 }

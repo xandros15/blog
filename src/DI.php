@@ -6,30 +6,33 @@ namespace Xandros15\Blog;
 
 final class DI
 {
-    private static $instance;
     private $called = [];
     private $frozen = [];
     private $unfrozen = [];
 
-    private function __construct()
+    /**
+     * DI constructor.
+     *
+     * @param array $params
+     */
+    public function __construct(array $params = [])
     {
-    }
-
-    private function __clone()
-    {
+        foreach ($params as $name => $param) {
+            $this->set($name, $param);
+        }
     }
 
     /**
-     * @return DI
+     * @param string $name
+     * @param $value
      */
-    public static function getInstance(): self
+    private function set(string $name, $value)
     {
-        if (!static::$instance) {
-            static::$instance = new static();
+        if (in_array($name, array_keys($this->frozen) + $this->called)) {
+            throw new \InvalidArgumentException('Can\'t set existing item');
         }
 
-        return static::$instance;
-
+        $this->frozen[$name] = $value;
     }
 
     /**
@@ -77,18 +80,4 @@ final class DI
 
         return $this->unfrozen[$name];
     }
-
-    /**
-     * @param string $name
-     * @param $value
-     */
-    public function set(string $name, $value)
-    {
-        if (in_array($name, array_keys($this->frozen) + $this->called)) {
-            throw new \InvalidArgumentException('Can\'t set existing item');
-        }
-
-        $this->frozen[$name] = $value;
-    }
-
 }
