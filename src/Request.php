@@ -42,39 +42,6 @@ class Request
     }
 
     /**
-     * @see http://php.net/manual/en/function.getallheaders.php#84262
-     * @return array
-     */
-    private function parseHeaders(): array
-    {
-        $headers = [];
-        foreach ($_SERVER as $name => $value) {
-            if (substr($name, 0, 5) == 'HTTP_') {
-                $name = str_replace('_', ' ', substr($name, 5));
-                $name = str_replace(' ', '-', ucwords(strtolower($name)));
-                $headers[$name] = $value;
-            }
-        }
-
-        return $headers;
-    }
-
-    /**
-     * @return array
-     */
-    private function parseBody(): array
-    {
-        switch (strtoupper($_SERVER['REQUEST_METHOD'])) {
-            case 'GET':
-                return $_GET;
-            case 'POST':
-                return $_POST;
-            default:
-                throw new \RuntimeException("Method Not Allowed", 405);
-        }
-    }
-
-    /**
      * @return array
      */
     public function getEnv(): array
@@ -109,8 +76,44 @@ class Request
         return $this->getParams()[$name] ?: $default;
     }
 
+    /**
+     * @return array
+     */
     public function getHeaders()
     {
         return $this->headers;
+    }
+
+    /**
+     * @see http://php.net/manual/en/function.getallheaders.php#84262
+     * @return array
+     */
+    private function parseHeaders(): array
+    {
+        $headers = [];
+        foreach ($_SERVER as $name => $value) {
+            if (substr($name, 0, 5) == 'HTTP_') {
+                $name = str_replace('_', ' ', substr($name, 5));
+                $name = str_replace(' ', '-', ucwords(strtolower($name)));
+                $headers[$name] = $value;
+            }
+        }
+
+        return $headers;
+    }
+
+    /**
+     * @return array
+     */
+    private function parseBody(): array
+    {
+        switch (strtoupper($_SERVER['REQUEST_METHOD'])) {
+            case 'GET':
+                return $_GET;
+            case 'POST':
+                return $_POST;
+            default:
+                throw new \RuntimeException("Method Not Allowed", 405);
+        }
     }
 }

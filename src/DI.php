@@ -24,19 +24,6 @@ final class DI
 
     /**
      * @param string $name
-     * @param $value
-     */
-    private function set(string $name, $value)
-    {
-        if (in_array($name, array_keys($this->frozen) + $this->called)) {
-            throw new \InvalidArgumentException('Can\'t set existing item');
-        }
-
-        $this->frozen[$name] = $value;
-    }
-
-    /**
-     * @param string $name
      *
      * @return mixed
      */
@@ -47,6 +34,19 @@ final class DI
         }
 
         return $this->getFrozen($name);
+    }
+
+    /**
+     * @param string $name
+     * @param $value
+     */
+    private function set(string $name, $value)
+    {
+        if (in_array($name, array_keys($this->frozen) + $this->called)) {
+            throw new \InvalidArgumentException('Can\'t set existing item');
+        }
+
+        $this->frozen[$name] = $value;
     }
 
     /**
